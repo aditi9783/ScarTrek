@@ -12,4 +12,4 @@ translated product of the gene. This analyses is useful to detect gene inactivat
 
 Additional scripts are provided to do the following upstream analyses: quality control of raw reads in fastq format and mapping the filtered reads to the reference genome. Although, the user will need to install (or load in their environment) third party bioinformatics tools to process fastq files and map the reads (see DEPENDENCIES.txt). High Performance Computing Centers at major universities already have these resources installed.
 
-For any questions, comments, or suggestions, please contact Aditi Gupta at ag1349@njms.rutgers.edu or aditi9783@gmail.com.
+For any questions, comments, or suggestions, please contact Aditi Gupta at ag1349 <at> njms.rutgers.edu or aditi9783 <at> gmail.com.
