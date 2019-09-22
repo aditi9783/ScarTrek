@@ -4,7 +4,9 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-version = os.environ["TRAVIS_TAG"] if os.environ["TRAVIS_TAG"] else "0.0.1"
+version = os.getenv("TRAVIS_TAG", "0.0.1")  # default if TRAVIS_TAG doesn't exist ...
+version = version if version else "0.0.1"  # ... or if TRAVIS_TAG is blank
+print("Using version %s" % version)
 
 setuptools.setup(
     name="aditi9783",
