@@ -1,0 +1,19 @@
+Installing ScarTrek
+-------------------
+
+ScarTrek is written in Python v2.7.5. The following python modules are used but they come pre-packaged with the python distribution. 
+os
+subprocess
+multiprocessing
+
+Thus, no action is required to get ScarTrek working if the user has his or her whole-genome sequence data already mapped to the reference genome. If the user wishes to use additional scripts provided for quality control and mapping of raw sequencing data, then the following software need to be installed or loaded in the environment:
+bowtie2/2.2.6, samtools/1.2, bcftools/1.2, java/1.8.0_66 <TODO: add trimmomatic, change code to use trimmomatic package>
+
+If the user has access to HPCC resources, then these programs can be loaded in the environment from the command prompt:
+$ module load bowtie2/2.2.6
+$ module load samtools/1.2
+$ module load bcftools/1.2
+$ module load java/1.8.0_66
+where $ is the prompt.
+
+ScarTrek does not have a graphical user interface yet, and has been tested in a Unix shell environment only.
