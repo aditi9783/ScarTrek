@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import os
 import sys
 from scartrek.scars_functions import *
 from scartrek.globalvars import extractSeq
