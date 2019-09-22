@@ -40,7 +40,7 @@ def scars( slist, MAPRATE, COVTHRES, ntseq, gdict, genes, aaseq): # Input: tuple
 # end of scars ###########################
 
 
-def main(argv = sys.argv):
+def main(argv = sys.argv[1:]):
     parser = argparse.ArgumentParser(description='Detect indel scars from mpileup files.',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-i', '--input', required=True,
