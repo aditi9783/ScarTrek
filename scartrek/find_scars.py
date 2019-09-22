@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-import os
 import argparse
+import sys
 from scars_functions import *
 from globalvars import extractSeq
-import filecmp
 
 
 # start of scars ###########################
@@ -41,36 +40,9 @@ def scars( slist, MAPRATE, COVTHRES, ntseq, gdict, genes, aaseq): # Input: tuple
 # end of scars ###########################
 
 
-def assert_values(basedir):
-    samples = ["sample1", "sample2", "sample3"]
-    files_to_compare = ["frameshifts2", "indels", "genewise.mutations2", "stopcodon_causing_mut2"]
-    scar_results = {}
-    for sample in samples:
-        for filename in files_to_compare:
-            sample_basedir = basedir + "/" + sample + "/mapped"
-
-            expected_file = sample_basedir + "/oldfiles/" + sample + "." + filename
-            actual_file = sample_basedir + "/" + sample + "." + filename
-
-            scar_results["{} {}".format(sample, filename)] = filecmp.cmp(expected_file, actual_file)
-
-    failed_tests = [sample for sample, result in scar_results.items() if not result]
-    if failed_tests:
-        print "Failed "
-        print [sample for sample in failed_tests]
-    else:
-        print "All passed!"
 
 
-
-if __name__ == '__main__':
-    ### TODOs
-    # 1. move core logic out of main method and into separate method
-    # 2. make other modules private with leading underscores
-    # 3. reformat of code for pep8
-    # 4. use list comprehensions or map where possible
-    ###
-
+def main(argv):
     parser = argparse.ArgumentParser(description='Detect indel scars from mpileup files.',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-i', '--input', required=True,
@@ -84,31 +56,24 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--protseq', default="../reference/H37Rv_proteins_from_genbank.txt",
                         help='Protein sequences for the reference organism, default: M. tuberculosis')
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
-    # args.input = "./tests/test1/"
-
-    # <inputDir>/<sampleNames>/mapped
     seqpath = args.input
     seqids = os.walk(seqpath).next()[1] # only get the subdir in the seqpath, not further down subdirs
 
     # seqlist = [ x for sd in seqids]
+    # seqlist = [ (seqpath + sd, sd) for sd in seqids ]
     seqlist = []
     for sd in seqids:
         #if len(seqlist) == 2: # for testing
-        #    break   
+        #    break
         seqdir = seqpath+sd
         seqlist.append( [seqdir, sd] )
-
-    # TODO these are not explicitly needed to be declared as types; add this to method doc instead. In Python 3.7, you have type hints
-
 
     genes = []  # list of tuples of gene start, gene end, gene name such that start < end (can't identify complement genes)
     gdict = {}  # key: genename, value: gene start and end pos with start > end for complement genes
     ntseq = {}  # key: genename, value: nt seq from NCBI
     aaseq = {}  # key: genename, value: amino acid seq for the encoded protein (from NCBI)
-
-    # TODO instead of 0 and 1, should you use a boolean instead
 
     # extract nucleotide and protein sequences for H37Rv genes
     # ntseq, gdict, genes = extractSeq("../reference/H37Rv_genes.txt", 0)
@@ -119,4 +84,6 @@ if __name__ == '__main__':
         #print sq
         scars(sq, args.maprate, args.covthres, ntseq, gdict, genes, aaseq)
 
-    assert_values(seqpath)
+
+if __name__ == '__main__':
+    main(sys.argv)
