@@ -11,8 +11,8 @@ COVTHRES = 20 # min coverage for detecting indels
 complement = {"A" : "T", "T" : "A", "C" : "G", "G" : "C"}
 
 # start of checkMappingRate ####################
-def checkMappingRate( seqdir ):
-    fh = open(seqdir+"/mapped/map.run", 'r')
+def checkMappingRate( fpath ):
+    fh = open(fpath+"map.run", 'r')
     maprate = "0.0"
     for line in fh:
         if " overall alignment rate" in line:
@@ -23,13 +23,7 @@ def checkMappingRate( seqdir ):
 
 # start of findIndels ########################
 def findIndels( fpath, sd ):
-    """
 
-    :type sd: object
-    """
-    # uncompress the mpileup file and read it.
-    # if os.path.exists(seqdir+"/mapped/aln.sorted.bam.mpileup.gz"):
-    #    os.system("gzip -d "+seqdir+"/mapped/aln.sorted.bam.mpileup.gz")
     mpileupfh = open(fpath+"aln.sorted.bam.mpileup", 'r')
     outfh = open(fpath+sd+".indels", 'w')
     n_idl = 0
@@ -76,7 +70,6 @@ def findIndels( fpath, sd ):
                 continue
     # print "Number of true indels:", n_idl
     mpileupfh.close()
-    # os.system("gzip "+seqdir+"/mapped/aln.sorted.bam.mpileup") # compress again the mpileup output
     outfh.close()
 # end of findIndels ########################
 
@@ -181,9 +174,9 @@ def checkProtein2(gname, indellist, ntseq, gdict):
 # end of checkProtein2 #########################
 
 # start of getStrainIndels #####################
-def getStrainIndels( seqdir, sd, genes, gnames ):
+def getStrainIndels( fpath, sd, genes, gnames ):
     genemut = {gn : [] for gn in gnames} # key: gene, val: list of mutations in that gene
-    fh = open(seqdir+"/mapped/"+sd+".indels", 'r')
+    fh = open(fpath+sd+".indels", 'r')
     for line in fh:
         line = line.rstrip('\n')
         content = line.split()

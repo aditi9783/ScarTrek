@@ -9,14 +9,14 @@ import filecmp
 # start of scars ###########################
 def scars( slist ): # Input: tuple of [seqdir, sd], seqdir: full path to mapped reads for each strain, sd: strain name
     seqdir, sd = slist
-    maprate = checkMappingRate( seqdir ) # Get the % of reads that mapped to the reference
+    maprate = checkMappingRate( seqdir+"/mapped/" ) # Get the % of reads that mapped to the reference
     print seqdir, maprate
     if maprate > 20.0: # only proceed if 20% or more reads mapped
         findIndels( seqdir+"/mapped/", sd ) # find all indels from mpileup file, and write those in the mapped folder for each strain
         fh = open(seqdir+"/mapped/"+sd+".genewise.mutations2", 'w')
         fhstop = open(seqdir+"/mapped/"+sd+".stopcodon_causing_mut2", 'w')
         fhfs = open(seqdir+"/mapped/"+sd+".frameshifts2", 'w')
-        genewise_indels = getStrainIndels(seqdir, sd, genes, gdict.keys())
+        genewise_indels = getStrainIndels(seqdir+"/mapped/", sd, genes, gdict.keys())
         for g in genewise_indels:
             # not all genes had their sequences in NCBI sequence files that were read into ntseq and aaseq
             # if a gene sequence is not available, skip
