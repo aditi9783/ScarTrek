@@ -49,8 +49,8 @@ deploy:
   skip_existing: true
   password:
     secure: aBKjapE744xaRkTkc0IR1lY3HNLrdnnLHM7rivzyWQ7SGwZyYmRd7Ln62F6ri/vbLCa6jXLok08otz9+fhXc8tTXspQQ7oEWM6Wd0YsCmx/eof5CjIrmu5XYH3rsZGXtXjraDj/a/YJEWX/hktUqKWqEJpwI2klgwljyZu3Vf1Hy9wKQA0WAU6Y54ttmbx2dO1YG0HQMubBxVK4swpUJ9F2fbXk4xoHO5HGq9H4SzwQMuTD/tv+TjDgXWH6c/DONkcyxjQNzcmQ6OCgN9Dbt2BDLlL+6psraahTJzWFlTozpxanqR6Dxboj+dfDdm34Xav27k2N122mFtV8o/BPHr7Yf3GZAtwUh69bEJPzU+wVV+D8qe0ljg9x4ptFe+VZSUcj3C9/EvIs6AEPuKSBIxTF+CsxUUCNC2leaerpmLJVW/VoqKHvdIsCJt1hV95JrPlxdg4XM2RJIKZFpdAWaaJNc4ZAFZVViU3COinCI/PLgwd3aRb603GTP8mkqbvgRJCasz5ma1o637esKC0/PG0TCN9KuYde+nG6347AoUy9GZLuqvt1cp2ceEZXw8utt7WtNJrR9o22aQDWZVbFc/JP0ZbW0o1GsqvGZhZRWAkV+VmCCCcs0qANsfyXMZzAZhtr+c6BIoco55HvcKFbzg17V/PACMs9MxMwNVEb1WAw=
-  on:
-    tags: true
+#  on:
+#    tags: true
   distributions: sdist bdist_wheel
   python:
     - 2.7
