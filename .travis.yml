@@ -19,7 +19,7 @@ install:
     else
       FILE_OSPATH="Linux";
     fi
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2*" ]]; then
       FILE_VERSION="2";
     else
       FILE_VERSION="3";
