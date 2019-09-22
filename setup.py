@@ -4,13 +4,11 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-print("My envs!")
-print(os.environ["TRAVIS_TAG"])
-print(os.environ["TRAVIS_SUDO"])
+version = os.environ["TRAVIS_TAG"] if os.environ["TRAVIS_TAG"] else "0.0.1"
 
 setuptools.setup(
     name="aditi9783",
-    version="0.0.2",
+    version=version,
     author="Aditi Gupta",
     author_email="aditi9783@gmail.com",
     description="Python package for identifying gene disrupting and restoring indels in whole-genome sequencing data of Mycobacterium tuberculosis samples",
