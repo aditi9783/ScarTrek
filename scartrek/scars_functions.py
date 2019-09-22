@@ -4,9 +4,6 @@ import os
 from genetic_code import code
 #from globalvars import genes, gdict, ntseq, aaseq
 
-global COVTHRES
-COVTHRES = 20 # min coverage for detecting indels
-
 # define base complements
 complement = {"A" : "T", "T" : "A", "C" : "G", "G" : "C"}
 
@@ -22,7 +19,7 @@ def checkMappingRate( fpath ):
 # end of checkMappingRate ####################
 
 # start of findIndels ########################
-def findIndels( fpath, sd ):
+def findIndels( fpath, sd, COVTHRES ):
 
     mpileupfh = open(fpath+"aln.sorted.bam.mpileup", 'r')
     outfh = open(fpath+sd+".indels", 'w')

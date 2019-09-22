@@ -1,76 +1,53 @@
 #!/usr/bin/env python
 
 import os
+import argparse
 from scars_functions import *
-from globalvars import genes, gdict, ntseq, aaseq
+from globalvars import extractSeq
 import filecmp
 
 
 # start of scars ###########################
-def scars( slist ): # Input: tuple of [seqdir, sd], seqdir: full path to mapped reads for each strain, sd: strain name
+def scars( slist, MAPRATE, COVTHRES, ntseq, gdict, genes, aaseq): # Input: tuple of [seqdir, sd], seqdir: full path to mapped reads for each strain, sd: strain name
     seqdir, sd = slist
     maprate = checkMappingRate( seqdir+"/mapped/" ) # Get the % of reads that mapped to the reference
     print seqdir, maprate
-    if maprate > 20.0: # only proceed if 20% or more reads mapped
-        findIndels( seqdir+"/mapped/", sd ) # find all indels from mpileup file, and write those in the mapped folder for each strain
-        fh = open(seqdir+"/mapped/"+sd+".genewise.mutations2", 'w')
-        fhstop = open(seqdir+"/mapped/"+sd+".stopcodon_causing_mut2", 'w')
-        fhfs = open(seqdir+"/mapped/"+sd+".frameshifts2", 'w')
-        genewise_indels = getStrainIndels(seqdir+"/mapped/", sd, genes, gdict.keys())
-        for g in genewise_indels:
-            # not all genes had their sequences in NCBI sequence files that were read into ntseq and aaseq
-            # if a gene sequence is not available, skip
-            if g not in ntseq.keys():
-                continue
-            nummut = len(genewise_indels[g])
-            if nummut > 0: # at least one mutation
-                # write genic mutations to file
-                fh.write(g+" : "+" : "+" ".join(genewise_indels[g])+"\n")
-            if nummut > 1: # gene should have > 1 mutations/indels to check for scars or reverting stop codons
-                #print g, genewise_indels[g]
-                if g not in aaseq.keys(): # RNA genes like rrs won't have a protein sequence
-                    continue # skip if no protein sequence
-                processedIndels, disruptivemut = checkProtein2( g, genewise_indels[g], ntseq, gdict ) # check the impact of multiple mutations on the protein
-                if len(disruptivemut) > 0: # write stop codon inducing mutations to file
-                    fhstop.write(g+" : "+" ".join(disruptivemut)+"\n")
-                output = checkFrameshifts( g, processedIndels, ntseq, aaseq, sd )
-                fhfs.write(output)
-        fh.close()
-        fhstop.close()
-        fhfs.close()
+    if maprate > MAPRATE: # only proceed if 20% (default) or more reads mapped
+        findIndels( seqdir+"/mapped/", sd, COVTHRES ) # find all indels from mpileup file, and write those in the mapped folder for each strain
+        with open(seqdir+"/mapped/"+sd+".genewise.mutations2", 'w') as fh,\
+                open(seqdir+"/mapped/"+sd+".stopcodon_causing_mut2", 'w') as fhstop,\
+                open(seqdir+"/mapped/"+sd+".frameshifts2", 'w') as fhfs:
+            genewise_indels = getStrainIndels(seqdir+"/mapped/", sd, genes, gdict.keys())
+            for g in genewise_indels:
+                # not all genes had their sequences in NCBI sequence files that were read into ntseq and aaseq
+                # if a gene sequence is not available, skip
+                if g not in ntseq.keys():
+                    continue
+                nummut = len(genewise_indels[g])
+                if nummut > 0: # at least one mutation
+                    # write genic mutations to file
+                    fh.write(g+" : "+" : "+" ".join(genewise_indels[g])+"\n")
+                if nummut > 1: # gene should have > 1 mutations/indels to check for scars or reverting stop codons
+                    #print g, genewise_indels[g]
+                    if g not in aaseq.keys(): # RNA genes like rrs won't have a protein sequence
+                        continue # skip if no protein sequence
+                    processedIndels, disruptivemut = checkProtein2( g, genewise_indels[g], ntseq, gdict ) # check the impact of multiple mutations on the protein
+                    if len(disruptivemut) > 0: # write stop codon inducing mutations to file
+                        fhstop.write(g+" : "+" ".join(disruptivemut)+"\n")
+                    output = checkFrameshifts( g, processedIndels, ntseq, aaseq, sd )
+                    fhfs.write(output)
 
-    return maprate
+    return
 # end of scars ###########################
 
-if __name__ == '__main__':
-    seqlist = []
-    # seqpath = "/scratch/ag1349/Zhang2013NatureGen/NGS_analysis/"
-    seqpath = "/Users/aditi/PycharmProjects/ScarTrek/scartrek/tests/test1/"
 
-    # <inputDir>/<sampleNames>/mapped
-    seqids = os.walk(seqpath).next()[1] # only get the subdir in the seqpath, not further down subdirs
-    for sd in seqids:
-        #if len(seqlist) == 2: # for testing
-        #    break   
-        seqdir = seqpath+sd
-        onlyfiles = [f for f in os.listdir(seqdir+"/mapped") if os.path.isfile(seqdir+"/mapped/"+f)]
-        seqlist.append( [seqdir, sd] )
-
-    # print seqlist
-    # maprate = {seqdir: scars((seqdir, sd)) for seqdir, sd in seqlist}
-    # print maprate
-    # assert maprate['/Users/aditi/PycharmProjects/ScarTrek/scartrek/tests/test1/sample1', 99.21]
-    # for sq in seqlist:
-    #     #print sq
-    #     scars(sq)
-
-    samples = [ "sample1", "sample2", "sample3" ]
-    files_to_compare = [ "frameshifts2", "indels", "genewise.mutations2", "stopcodon_causing_mut2"]
-
+def assert_values(basedir):
+    samples = ["sample1", "sample2", "sample3"]
+    files_to_compare = ["frameshifts2", "indels", "genewise.mutations2", "stopcodon_causing_mut2"]
     scar_results = {}
     for sample in samples:
         for filename in files_to_compare:
-            sample_basedir = seqpath + "/" + sample + "/mapped"
+            sample_basedir = basedir + "/" + sample + "/mapped"
 
             expected_file = sample_basedir + "/oldfiles/" + sample + "." + filename
             actual_file = sample_basedir + "/" + sample + "." + filename
@@ -83,3 +60,63 @@ if __name__ == '__main__':
         print [sample for sample in failed_tests]
     else:
         print "All passed!"
+
+
+
+if __name__ == '__main__':
+    ### TODOs
+    # 1. move core logic out of main method and into separate method
+    # 2. make other modules private with leading underscores
+    # 3. reformat of code for pep8
+    # 4. use list comprehensions or map where possible
+    ###
+
+    parser = argparse.ArgumentParser(description='Detect indel scars from mpileup files.',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('-i', '--input', required=True,
+                        help='Input directory that has mpileup files for each sample. See tests/test1 for example')
+    parser.add_argument('-m', '--maprate', default=20.0, type=float,
+                        help='Minimum read mapping rate required to consider a sample')
+    parser.add_argument('-c', '--covthres', default=20, type=int,
+                        help='Minimum read coverage required at a position to detect an indel')
+    parser.add_argument('-g', '--geneseq', default="../reference/H37Rv_genes.txt",
+                        help='Gene sequences in the reference genome, default reference: M. tuberculosis')
+    parser.add_argument('-p', '--protseq', default="../reference/H37Rv_proteins_from_genbank.txt",
+                        help='Protein sequences for the reference organism, default: M. tuberculosis')
+
+    args = parser.parse_args()
+
+    # args.input = "./tests/test1/"
+
+    # <inputDir>/<sampleNames>/mapped
+    seqpath = args.input
+    seqids = os.walk(seqpath).next()[1] # only get the subdir in the seqpath, not further down subdirs
+
+    # seqlist = [ x for sd in seqids]
+    seqlist = []
+    for sd in seqids:
+        #if len(seqlist) == 2: # for testing
+        #    break   
+        seqdir = seqpath+sd
+        seqlist.append( [seqdir, sd] )
+
+    # TODO these are not explicitly needed to be declared as types; add this to method doc instead. In Python 3.7, you have type hints
+
+
+    genes = []  # list of tuples of gene start, gene end, gene name such that start < end (can't identify complement genes)
+    gdict = {}  # key: genename, value: gene start and end pos with start > end for complement genes
+    ntseq = {}  # key: genename, value: nt seq from NCBI
+    aaseq = {}  # key: genename, value: amino acid seq for the encoded protein (from NCBI)
+
+    # TODO instead of 0 and 1, should you use a boolean instead
+
+    # extract nucleotide and protein sequences for H37Rv genes
+    # ntseq, gdict, genes = extractSeq("../reference/H37Rv_genes.txt", 0)
+    # aaseq = extractSeq("../reference/H37Rv_proteins_from_genbank.txt", 1)
+    ntseq, gdict, genes = extractSeq(args.geneseq, 0)
+    aaseq = extractSeq(args.protseq, 1)
+    for sq in seqlist:
+        #print sq
+        scars(sq, args.maprate, args.covthres, ntseq, gdict, genes, aaseq)
+
+    assert_values(seqpath)

@@ -58,12 +58,5 @@ def extractSeq( fname, typeflag ): # extract gene or protein seq from respective
         return seqdict
 # end of extractSeq ##########################
 
-genes = [] # list of tuples of gene start, gene end, gene name such that start < end (can't identify complement genes)
-gdict = {} # key: genename, value: gene start and end pos with start > end for complement genes
-ntseq = {} # key: genename, value: nt seq from NCBI
-aaseq = {} # key: genename, value: amino acid seq for the encoded protein (from NCBI)
 
-# extract nucleotide and protein sequences for H37Rv genes
-ntseq, gdict, genes = extractSeq( "../reference/H37Rv_genes.txt", 0 )
-aaseq = extractSeq( "../reference/H37Rv_proteins_from_genbank.txt", 1 )
 
