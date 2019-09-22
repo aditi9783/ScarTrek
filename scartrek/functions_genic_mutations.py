@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from genetic_code import code
+from scartrek.genetic_code import code
 
 # define base complements
 complement = {"A" : "T", "T" : "A", "C" : "G", "G" : "C"}

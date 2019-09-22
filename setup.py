@@ -33,4 +33,7 @@ setuptools.setup(
     tests_require=[
         'nose'
     ],
+    entry_points={
+        'console_scripts': ['find-scars=scartrek.find_scars:main'],
+    },
 )

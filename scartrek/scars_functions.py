@@ -1,8 +1,7 @@
 #!/usr/bin/python 
 
-import os
-from genetic_code import code
-#from globalvars import genes, gdict, ntseq, aaseq
+from scartrek.genetic_code import code
+#from scartrek.globalvars import genes, gdict, ntseq, aaseq
 
 # define base complements
 complement = {"A" : "T", "T" : "A", "C" : "G", "G" : "C"}

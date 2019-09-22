@@ -2,7 +2,7 @@
 
 # read complete DST profile file and retain only those columns (mutations) that have non-synonymous genic mutations
 
-from functions_genic_mutations import *
+from scartrek.functions_genic_mutations import *
 
 # open necessary files
 dstfh = open("/home/ag1349/Hassan/Zhangetal2013/results/DST_profiles_substitutions.txt", 'r') # DST Profiles

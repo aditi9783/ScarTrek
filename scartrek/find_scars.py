@@ -2,8 +2,8 @@
 
 import argparse
 import sys
-from scars_functions import *
-from globalvars import extractSeq
+from scartrek.scars_functions import *
+from scartrek.globalvars import extractSeq
 
 
 # start of scars ###########################
@@ -40,9 +40,7 @@ def scars( slist, MAPRATE, COVTHRES, ntseq, gdict, genes, aaseq): # Input: tuple
 # end of scars ###########################
 
 
-
-
-def main(argv):
+def main(argv = sys.argv):
     parser = argparse.ArgumentParser(description='Detect indel scars from mpileup files.',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-i', '--input', required=True,
