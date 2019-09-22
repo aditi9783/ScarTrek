@@ -10,7 +10,7 @@ from globalvars import extractSeq
 def scars( slist, MAPRATE, COVTHRES, ntseq, gdict, genes, aaseq): # Input: tuple of [seqdir, sd], seqdir: full path to mapped reads for each strain, sd: strain name
     seqdir, sd = slist
     maprate = checkMappingRate( seqdir+"/mapped/" ) # Get the % of reads that mapped to the reference
-    print seqdir, maprate
+    print((seqdir, maprate))
     if maprate > MAPRATE: # only proceed if 20% (default) or more reads mapped
         findIndels( seqdir+"/mapped/", sd, COVTHRES ) # find all indels from mpileup file, and write those in the mapped folder for each strain
         with open(seqdir+"/mapped/"+sd+".genewise.mutations2", 'w') as fh,\

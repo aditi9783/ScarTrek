@@ -78,8 +78,8 @@ def addMutations( genename, gseq, subs, indels ): # add all point mutations and 
             shift -= len(idl[2]) # len of delete subtracts from the shifted index 
     stopflag = findStopCodon( mutseq )
     if stopflag == 0:
-        print genename, "".join(gseq), subs, indels
-        print "\n===No more stop codon after adding all subs+indels!\n\n"
+        print(genename, "".join(gseq), subs, indels)
+        print("\n===No more stop codon after adding all subs+indels!\n\n")
     return mutseq # return mutated seq
 # end of addMutations ##########################
 
@@ -137,7 +137,7 @@ def checkProtein2( gname, subslist, indellist, ntseq, gdict ):
             disruptive_mut.append(idl)
 
     if stop_codon_flag == 1: # add all mutations in this gene together to see if the stop codon is reversed
-        print gname, "\tStop-codon introducing mutations: ", disruptive_mut
+        print(gname, "\tStop-codon introducing mutations: ", disruptive_mut)
         mutseq = addMutations( gname, gene_nt, subs, indels ) # add all point mutations and indels together, and return the mutated seq
 
     return indels

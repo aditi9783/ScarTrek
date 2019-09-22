@@ -25,7 +25,7 @@ class TestScarTrekIntegration(unittest.TestCase):
 
         failed_tests = [sample for sample, result in scar_results.items() if not result]
         if failed_tests:
-            print "Failed "
-            print [sample for sample in failed_tests]
+            print("Failed ")
+            print([sample for sample in failed_tests])
         else:
-            print "All passed!"
+            print("All passed!")
