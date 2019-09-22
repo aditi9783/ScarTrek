@@ -1,7 +1,12 @@
+import os
 import setuptools
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
+
+print("My envs!")
+print(os.environ["TRAVIS_TAG"])
+print(os.environ["TRAVIS_SUDO"])
 
 setuptools.setup(
     name="aditi9783",
