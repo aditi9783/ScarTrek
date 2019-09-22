@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="aditi9783_ScarTrek",
-    version="0.0.1",
+    name="aditi9783",
+    version="0.0.2",
     author="Aditi Gupta",
     author_email="aditi9783@gmail.com",
     description="Python package for identifying gene disrupting and restoring indels in whole-genome sequencing data of Mycobacterium tuberculosis samples",
@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/aditi9783/ScarTrek",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 2",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
