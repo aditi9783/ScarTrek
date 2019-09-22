@@ -23,6 +23,8 @@ install:
     else
       FILE_VERSION="3";
     fi
+  - echo "Using OS $FILE_OSPATH and Python version prefix $FILE_VERSION and python var $TRAVIS_PYTHON_VERSION"
+  - export
   - wget https://repo.continuum.io/miniconda/Miniconda${FILE_VERSION}-latest-${FILE_OSPATH}-x86_64.sh -O miniconda.sh;
   - bash miniconda.sh -b -p $HOME/miniconda
   - source "$HOME/miniconda/etc/profile.d/conda.sh"
