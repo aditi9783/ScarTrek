@@ -66,7 +66,7 @@ def main(argv = sys.argv[1:]):
     for sd in seqids:
         #if len(seqlist) == 2: # for testing
         #    break
-        seqdir = seqpath+sd
+        seqdir = seqpath+"/"+sd
         seqlist.append( [seqdir, sd] )
 
     genes = []  # list of tuples of gene start, gene end, gene name such that start < end (can't identify complement genes)

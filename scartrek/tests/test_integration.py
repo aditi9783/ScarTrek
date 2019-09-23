@@ -4,9 +4,9 @@ import unittest
 
 
 class TestScarTrekIntegration(unittest.TestCase):
-    @unittest.skip("Skipping in remote build until we get test data committed")
+    # @unittest.skip("Skipping in remote build until we get test data committed")
     def test_assert_values(self):
-        basedir = "./test1/"
+        basedir = "./test1"
         find_scars.main(["-i", basedir,
                          "--geneseq", "../../reference/H37Rv_genes.txt",
                          "--protseq", "../../reference/H37Rv_proteins_from_genbank.txt"])

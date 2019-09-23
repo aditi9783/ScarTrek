@@ -6,11 +6,10 @@ with open("README.md", "r") as fh:
 
 version = os.getenv("TRAVIS_TAG", "0.0.1")  # default if TRAVIS_TAG doesn't exist ...
 version = version if version else "0.0.1"  # ... or if TRAVIS_TAG is blank
-version = "0.0.4"  # override for local branch testing
 print("Using version %s" % version)
 
 setuptools.setup(
-    name="aditi9783",
+    name="scartrek",
     version=version,
     author="Aditi Gupta",
     author_email="aditi9783@gmail.com",
