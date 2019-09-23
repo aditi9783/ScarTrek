@@ -27,7 +27,7 @@ If installed using pip, ScarTrek can be run as:
 `$ find-scars [-h] -i INPUT [-m MAPRATE] [-c COVTHRES] [-g GENESEQ]
                      [-p PROTSEQ]`
 
-If downloaded from GitHub, ScarTrek can be run as:
+If downloaded from GitHub, ScarTrek can be run in the directory ScarTrek/scartrek/ as:
 
 `$ python find_scars.py [-h] -i INPUT [-m MAPRATE] [-c COVTHRES] [-g GENESEQ]
                      [-p PROTSEQ]`
