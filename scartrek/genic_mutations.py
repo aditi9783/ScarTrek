@@ -2,7 +2,7 @@
 
 # read complete DST profile file and retain only those columns (mutations) that have non-synonymous genic mutations
 
-from functions_genic_mutations import *
+from scartrek.functions_genic_mutations import *
 
 # open necessary files
 dstfh = open("/home/ag1349/Hassan/Zhangetal2013/results/DST_profiles_substitutions.txt", 'r') # DST Profiles
@@ -101,7 +101,7 @@ for g in ntseq.keys(): # get gene names
 for s in mutmatrix:
     sname = s[0] # strain name
     fh = open("/home/ag1349/Hassan/Zhangetal2013/NGS_analysis/"+sname+"/mapped/"+sname+".genewise.mutations", 'w')
-    print "\n=======", sname, "\n"
+    print("\n=======", sname, "\n")
     genenames = ntseq.keys()
     genewise_subs, mutpos = getStrainSubs(genenames, [int(val) for val in s[1:]], genes, nonsynmutations[1:]) # pass genenames, and mutkey. 0th idx is "Strain", don't pass that
     s_cov = getCoverage( sname, mutpos, 20 ) # get coverage at mut sites. If mutation site is not in s_cov, coverage is less than the value supplied. 

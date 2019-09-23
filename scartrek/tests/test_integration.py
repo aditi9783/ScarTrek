@@ -6,7 +6,7 @@ import unittest
 class TestScarTrekIntegration(unittest.TestCase):
     @unittest.skip("Skipping in remote build until we get test data committed")
     def test_assert_values(self):
-        basedir = "./test1/"
+        basedir = "./test1"
         find_scars.main(["-i", basedir,
                          "--geneseq", "../../reference/H37Rv_genes.txt",
                          "--protseq", "../../reference/H37Rv_proteins_from_genbank.txt"])
@@ -25,7 +25,7 @@ class TestScarTrekIntegration(unittest.TestCase):
 
         failed_tests = [sample for sample, result in scar_results.items() if not result]
         if failed_tests:
-            print "Failed "
-            print [sample for sample in failed_tests]
+            print("Failed ")
+            print([sample for sample in failed_tests])
         else:
-            print "All passed!"
+            print("All passed!")

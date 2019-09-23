@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 
 import argparse
+import os
 import sys
-from scars_functions import *
-from globalvars import extractSeq
+from scartrek.scars_functions import *
+from scartrek.globalvars import extractSeq
 
 
 # start of scars ###########################
 def scars( slist, MAPRATE, COVTHRES, ntseq, gdict, genes, aaseq): # Input: tuple of [seqdir, sd], seqdir: full path to mapped reads for each strain, sd: strain name
     seqdir, sd = slist
     maprate = checkMappingRate( seqdir+"/mapped/" ) # Get the % of reads that mapped to the reference
-    print seqdir, maprate
+    print((seqdir, maprate))
     if maprate > MAPRATE: # only proceed if 20% (default) or more reads mapped
         findIndels( seqdir+"/mapped/", sd, COVTHRES ) # find all indels from mpileup file, and write those in the mapped folder for each strain
         with open(seqdir+"/mapped/"+sd+".genewise.mutations2", 'w') as fh,\
@@ -40,9 +41,7 @@ def scars( slist, MAPRATE, COVTHRES, ntseq, gdict, genes, aaseq): # Input: tuple
 # end of scars ###########################
 
 
-
-
-def main(argv):
+def main(argv = sys.argv[1:]):
     parser = argparse.ArgumentParser(description='Detect indel scars from mpileup files.',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-i', '--input', required=True,
@@ -67,7 +66,7 @@ def main(argv):
     for sd in seqids:
         #if len(seqlist) == 2: # for testing
         #    break
-        seqdir = seqpath+sd
+        seqdir = seqpath+"/"+sd
         seqlist.append( [seqdir, sd] )
 
     genes = []  # list of tuples of gene start, gene end, gene name such that start < end (can't identify complement genes)

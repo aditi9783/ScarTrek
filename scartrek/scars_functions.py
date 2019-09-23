@@ -1,8 +1,7 @@
 #!/usr/bin/python 
 
-import os
-from genetic_code import code
-#from globalvars import genes, gdict, ntseq, aaseq
+from scartrek.genetic_code import code
+#from scartrek.globalvars import genes, gdict, ntseq, aaseq
 
 # define base complements
 complement = {"A" : "T", "T" : "A", "C" : "G", "G" : "C"}
@@ -31,10 +30,10 @@ def findIndels( fpath, sd, COVTHRES ):
             try:
                 int(content[3]) # and correct files have 4th column as the coverage- an integer
             except ValueError: # if the 4th column does not have an int -> raise exception
-                print "Incorrect mpileup:", fpath, sd, line
+                print("Incorrect mpileup:", fpath, sd, line)
                 break
         else: # the line has less than 4 elements, incorrect line.
-            print "Incorrect mpileup:", sd, fpath, line
+            print("Incorrect mpileup:", sd, fpath, line)
             break
 
         cov = int(content[3])

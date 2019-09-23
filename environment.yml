@@ -1,0 +1,10 @@
+name: scartrek
+channels:
+  - bioconda
+dependencies:
+  - python=2.7
+  - bowtie2
+  - samtools
+  - bcftools
+  - java-jdk
+  - nose
