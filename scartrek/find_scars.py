@@ -6,14 +6,16 @@ import sys
 from scartrek.scars_functions import *
 from scartrek.globalvars import extractSeq
 
+from scartrek import scars_functions
+#print scars_functions.__file__
 
 # start of scars ###########################
-def scars( slist, MAPRATE, COVTHRES, ntseq, gdict, genes, aaseq): # Input: tuple of [seqdir, sd], seqdir: full path to mapped reads for each strain, sd: strain name
+def scars( slist, MAPRATE, COVTHRES, MAPQ, SBALANCE, ntseq, gdict, genes, aaseq): # Input: tuple of [seqdir, sd], seqdir: full path to mapped reads for each strain, sd: strain name
     seqdir, sd = slist
     maprate = checkMappingRate( seqdir+"/mapped/" ) # Get the % of reads that mapped to the reference
     print((seqdir, maprate))
     if maprate > MAPRATE: # only proceed if 20% (default) or more reads mapped
-        findIndels( seqdir+"/mapped/", sd, COVTHRES ) # find all indels from mpileup file, and write those in the mapped folder for each strain
+        findIndels( seqdir+"/mapped/", sd, COVTHRES, MAPQ, SBALANCE ) # find all indels from mpileup file, and write those in the mapped folder for each strain
         with open(seqdir+"/mapped/"+sd+".genewise.mutations2", 'w') as fh,\
                 open(seqdir+"/mapped/"+sd+".stopcodon_causing_mut2", 'w') as fhstop,\
                 open(seqdir+"/mapped/"+sd+".frameshifts2", 'w') as fhfs:
@@ -46,10 +48,14 @@ def main(argv):
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-i', '--input', required=True,
                         help='Input directory that has mpileup files for each sample. See tests/test1 for example')
-    parser.add_argument('-m', '--maprate', default=20.0, type=float,
+    parser.add_argument('-m', '--maprate', default=50.0, type=float,
                         help='Minimum read mapping rate required to consider a sample')
     parser.add_argument('-c', '--covthres', default=20, type=int,
                         help='Minimum read coverage required at a position to detect an indel')
+    parser.add_argument('-q', '--mapq', default=10, type=int,
+                        help='Minimum average mapping quality required at a position to detect an indel. This requires Samtools as well as .bam and .bai files. Set this parameter to 0 if do not want to use this filter.')
+    parser.add_argument('-s', '--sbalance', default=0.05, type=float,
+                        help='Minimum forward/reverse strand balance required at a position to detect an indel')
     parser.add_argument('-g', '--geneseq', default="../reference/H37Rv_genes.txt",
                         help='Gene sequences in the reference genome, default reference: M. tuberculosis')
     parser.add_argument('-p', '--protseq', default="../reference/H37Rv_proteins_from_genbank.txt",
@@ -81,7 +87,7 @@ def main(argv):
     aaseq = extractSeq(args.protseq, 1)
     for sq in seqlist:
         #print sq
-        scars(sq, args.maprate, args.covthres, ntseq, gdict, genes, aaseq)
+        scars(sq, args.maprate, args.covthres, args.mapq, args.sbalance, ntseq, gdict, genes, aaseq)
 
 
 if __name__ == '__main__':

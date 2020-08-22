@@ -13,8 +13,8 @@ translated product of the gene. This analyses is useful to detect gene inactivat
 
 ### Installation
 
-##### Using pip
-`$ pip install scartrek`
+[//]: # (##### Using pip)
+[//]: # (`$ pip install scartrek`)
 
 ##### From GitHub
 
@@ -22,15 +22,15 @@ ScarTrek project can be downloaded directly from GitHub and python scripts can b
 
 ### Usage
 
-If installed using pip, ScarTrek can be run as:
+[//]: # (If installed using pip, ScarTrek can be run as:)
 
-`$ find-scars [-h] -i INPUT [-m MAPRATE] [-c COVTHRES] [-g GENESEQ]
-                     [-p PROTSEQ]`
+[//]: # (`$ find-scars [-h] -i INPUT [-m MAPRATE] [-c COVTHRES] [-g GENESEQ]
+                     [-p PROTSEQ]`)
 
 If downloaded from GitHub, ScarTrek can be run in the directory ScarTrek/scartrek/ as:
 
-`$ python find_scars.py [-h] -i INPUT [-m MAPRATE] [-c COVTHRES] [-g GENESEQ]
-                     [-p PROTSEQ]`
+`$ python find_scars.py [-h] -i INPUT [-m MAPRATE] [-c COVTHRES] [-q MAPQ]
+                     [-s SBALANCE] [-g GENESEQ] [-p PROTSEQ]`
 
 where the arguments are:
 ```
@@ -44,6 +44,13 @@ where the arguments are:
   -c COVTHRES, --covthres COVTHRES
                         Minimum read coverage required at a position to detect
                         an indel (default: 20)
+  -q MAPQ, --mapq MAPQ  Minimum average mapping quality required at a position
+                        to detect an indel. This requires Samtools as well as
+                        .bam and .bai files. Set this parameter to 0 if do not
+                        want to use this filter. (default: 10)
+  -s SBALANCE, --sbalance SBALANCE
+                        Minimum forward/reverse strand balance required at a
+                        position to detect an indel (default: 0.05)
   -g GENESEQ, --geneseq GENESEQ
                         Gene sequences in the reference genome, default
                         reference: M. tuberculosis (default:
@@ -53,3 +60,11 @@ where the arguments are:
                         M. tuberculosis (default:
                         ../reference/H37Rv_proteins_from_genbank.txt)
 ```
+
+##### Example usage:
+`$ python find_scars.py -i ../example/ -q 0`
+
+The above example runs in <30 seconds. The MAPQ parameter is set to 0 (`-q 0`) because .bam and .bai files for the example are not included due to large file size.
+
+ScarTrek has been tested on CentOS Linux 7 (Core) and Mac OS 10.13.5.
+

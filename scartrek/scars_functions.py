@@ -1,6 +1,7 @@
 #!/usr/bin/python 
 
 from scartrek.genetic_code import code
+import subprocess
 #from scartrek.globalvars import genes, gdict, ntseq, aaseq
 
 # define base complements
@@ -18,13 +19,15 @@ def checkMappingRate( fpath ):
 # end of checkMappingRate ####################
 
 # start of findIndels ########################
-def findIndels( fpath, sd, COVTHRES ):
-
+def findIndels( fpath, sd, COVTHRES, MAPQ, SBALANCE ):
     mpileupfh = open(fpath+"aln.sorted.bam.mpileup", 'r')
     outfh = open(fpath+sd+".indels", 'w')
     n_idl = 0
+    genomeid = ""
     for line in mpileupfh:
         content = line.split()
+        genomeid = content[0]
+        ipos = content[1]
         # if the mpileup file is messed up (less than 5 items in line), print the dir name and move on to the next file
         if len(content) > 3: # positions with no coverage has len(content) = 4, thus correct lines have len > 3
             try:
@@ -36,10 +39,11 @@ def findIndels( fpath, sd, COVTHRES ):
             print("Incorrect mpileup:", sd, fpath, line)
             break
 
-        cov = int(content[3])
+        cov = float(content[3])
         if cov > COVTHRES: # at least COVTHRES depth at this position
-            readbases = content[4].upper() # contains bases/indels in the read. Conver to uppercase so that 1T and 1t are read as same indel
+            readbases = content[4]#.upper() # contains bases/indels in the read. Conver to uppercase so that 1T and 1t are read as same indel
             if "+" in readbases or "-" in readbases: # indel 
+                #print ipos, readbases
                 bases = list(readbases)
                 indel = []
                 for i in range(len(bases)):
@@ -56,12 +60,42 @@ def findIndels( fpath, sd, COVTHRES ):
                             digitlen = 3
                         indel.append( "".join(bases[i:i+1+digitlen+indellen]) ) # save from indelsign (+1), len (digitlen), and end of indel (indellen+1)
                 indelcounts = {x:indel.count(x) for x in indel} # key: indel, value: freq of that indel
-                for idl in indelcounts:
-                    if indelcounts[idl] > cov/2: # at least half the reads should have this indel
-                        n_idl += 1
-                        #print line
-                        #print idl, indelcounts[idl]
-                        outfh.write(content[1]+"\t"+content[2]+"\t"+idl+"\n")
+                uniqidls = list(set([idl.upper() for idl in indel]))
+                idl_fwd_rev = {k:[0,0] for k in uniqidls} # key: indel, value: [numf, numr]
+                for k in indelcounts:
+                    v = indelcounts[k]
+                    idlstr = k.lstrip('0123456789+-')
+                    #print "Idlstr: ", idlstr, v
+                    if idlstr.isupper():
+                        idl_fwd_rev[k][0] = v
+                    elif idlstr.islower():
+                        idl_fwd_rev[k.upper()][1] = v
+                #print idl_fwd_rev
+                for idl in idl_fwd_rev:
+                    numf = idl_fwd_rev[idl][0] # num forward reads supporting this indel
+                    numr = idl_fwd_rev[idl][1] # num reverse reads supporting this indel
+                    numtotal = float(numf+numr)
+                    sb = min(numf/numtotal, numr/numtotal)
+                    if numtotal > cov/2 and sb >= SBALANCE: # at least half the reads should have this indel and strand balance is above the threshold 
+                        if MAPQ != 0: # if MAPQ is >0, user wants filtering by mapping quality
+                            # calculate mapping quality at this indel position
+                            nextpos = str(int(ipos)+1)
+                            mapqout = -1
+                            cmd = "samtools view "+fpath+sd+".aln.sorted.bam \""+genomeid+":"+ipos+"-"+nextpos+"\" | awk \'{sum+=$5} END { print sum/NR}\'"
+                            try:
+                                mapqout = subprocess.check_output(cmd, shell=True)
+                            except subprocess.CalledProcessError as e:
+                                mapqout = e.output
+                            if mapqout:
+                                if mapqout > MAPQ:
+                                    n_idl += 1
+                                    outfh.write(content[1]+"\t"+content[2]+"\t"+idl+"\n")
+                            else:
+                                print "Samtools not found. Not filtering reads by mapping quality."
+                                n_idl += 1
+                                outfh.write(content[1]+"\t"+content[2]+"\t"+idl+"\n")
+                        else: # the user doesn't want filtering my mapping quality
+                            outfh.write(content[1]+"\t"+content[2]+"\t"+idl+"\n")
             else: # only interested in indels
                 continue
     # print "Number of true indels:", n_idl
